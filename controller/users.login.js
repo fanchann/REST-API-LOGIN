@@ -9,9 +9,6 @@ const {
     loginUsers
 } = require('../models');
 
-//dashboard/endpoint
-var dashboardUsers = require('./users.dashboard')
-
 const usersLogin = async (req, res) => {
     const {
         email,
@@ -25,27 +22,14 @@ const usersLogin = async (req, res) => {
                     }
                 })
                 .then((data) => {
-                    if (!data) {
-                        res.status(400).json({
-                            message: 'wrong email or password'
-                        })
-                    }
+                    if (!data) return res.status(400).json({message: 'wrong email or password'})
                     bcrypt.compare(password, data.password, function(err, result) {
-                        result ? res.json({
-                            status: 200,
-                            message: 'login succes',
-                        }) : res.status(400).json({
+                        result ? res.redirect(200,'/dashboard/') : res.status(400).json({
                             message: 'password incorrect'
                         })
                     })
                 })
-        } else {
-            return res.json({
-                status: 400,
-                message: 'email ' + email + ' not valid'
-            })
-
-        }
+        } else return res.json({status: 400,message: 'email ' + email + ' not valid'})
     } catch (error) {
         res.send(error)
     }
